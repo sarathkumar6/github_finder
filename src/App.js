@@ -1,5 +1,6 @@
 import './App.css';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navbar from '../src/components/layout/Navbar';
 import Alert from '../src/components/layout/Alert';
 import Users from '../src/components/users/Users';
@@ -44,19 +45,33 @@ class App extends Component {
 	render() {
 		const { users, loading } = this.state;
 		return (
-			<div className='App'>
-				<Navbar title='GitHub Profile Finder' />
-				<div className='container'>
-					<Alert alert={this.state.alert} />
-					<Search
-						onSearchUsers={this.onSearchUsers}
-						clearUsers={this.clearUsers}
-						showClear={users.length > 1}
-						setAlert={this.setAlert}
-					/>
-					<Users loading={loading} users={users} />
+			<Router>
+				<div className='App'>
+					<Navbar title='GitHub Profile Finder' />
+					<div className='container'>
+						<Alert alert={this.state.alert} />
+						<Switch>
+							<Route
+								exact
+								path='/'
+								render={(props) => {
+									return (
+										<Fragment>
+											<Search
+												onSearchUsers={this.onSearchUsers}
+												clearUsers={this.clearUsers}
+												showClear={users.length > 1}
+												setAlert={this.setAlert}
+											/>
+											<Users loading={loading} users={users} />
+										</Fragment>
+									);
+								}}
+							/>
+						</Switch>
+					</div>
 				</div>
-			</div>
+			</Router>
 		);
 	}
 }

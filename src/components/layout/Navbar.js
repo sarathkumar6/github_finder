@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-
 function Navbar({ icon, title }) {
 	return (
 		<nav className='navbar bg-primary'>
