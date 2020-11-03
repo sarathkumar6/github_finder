@@ -1,52 +1,44 @@
-import React, { Component } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
+import GithubContext from '../../context/github/githubContext';
+import AlertContext from '../../context/alert/alertContext';
 
-export class Search extends Component {
-	state = {
-		text: ''
+export function Search() {
+	const githubContext = useContext(GithubContext);
+	const alertContext = useContext(AlertContext);
+	const [ text, setText ] = useState('');
+
+	const onChangeHandler = (e) => {
+		setText(e.target.value);
 	};
-	static propTypes = {
-		onSearchUsers: PropTypes.func.isRequired, //ptfr shortcut
-		clearUsers: PropTypes.func.isRequired,
-		setAlert: PropTypes.func.isRequired
-	};
-	onChangeHandler = (e) => {
-		this.setState({ text: e.target.value });
-	};
-	onSubmitHandler = (e) => {
+	const onSubmitHandler = (e) => {
 		e.preventDefault();
-		if (this.state.text === '') {
-			this.props.setAlert('Please enter a search text', 'light');
+		if (text === '') {
+			alertContext.setAlert(true);
 		} else {
-			this.props.setAlert();
-			this.props.onSearchUsers(this.state.text);
-			this.setState({ text: '' });
+			githubContext.onSearchUsers(text);
+			alertContext.setAlert(false);
+			setText('');
 		}
 	};
-	render() {
-		const { showClear, clearUsers } = this.props;
-		return (
-			<div>
-				<form className='form' onSubmit={this.onSubmitHandler.bind(this)}>
-					<input
-						type='text'
-						name='text'
-						placeholder='Search users...'
-						value={this.state.text}
-						onChange={this.onChangeHandler}
-					/>
-					<input type='submit' value='Search' className='btn btn-dark btn-block' />
-				</form>
-				{showClear && (
-					<button className='btn btn-light btn-block' onClick={clearUsers}>
-						Clear
-					</button>
-				)}
-			</div>
-		);
-	}
+	return (
+		<div>
+			<form className='form' onSubmit={onSubmitHandler}>
+				<input type='text' name='text' placeholder='Search users...' value={text} onChange={onChangeHandler} />
+				<input type='submit' value='Search' className='btn btn-dark btn-block' />
+			</form>
+			{githubContext.users.length > 0 && (
+				<button className='btn btn-light btn-block' onClick={githubContext.clearUsers}>
+					Clear
+				</button>
+			)}
+		</div>
+	);
 }
 
+Search.propTypes = {
+	setAlert: PropTypes.func.isRequired
+};
 // const searchStyle = {
 // 	marginLeft: '5%',
 // 	marginRight: '5%'
