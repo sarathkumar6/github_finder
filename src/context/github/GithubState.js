@@ -2,8 +2,15 @@ import React, { useReducer, useState } from 'react';
 import axios from 'axios';
 import GithubContext from './githubContext';
 import GithubReducer from './githubReducer';
-import { SEARCH_USERS, SET_LOADING, CLEAR_USERS, GET_USER, GET_REPOS, SET_ALERT, REMOVE_ALERT } from '../types';
+import { SEARCH_USERS, SET_LOADING, CLEAR_USERS, GET_USER, GET_REPOS } from '../types';
 
+let githubClientId;
+let githubClientSecret;
+
+if (process.env.NODE_ENV !== 'production') {
+	githubClientId = '7a26272ebf1a0d17cd25';
+	githubClientSecret = '980d0d4ff101da92582af1aa1e9814e774b10fa3';
+}
 const GithubState = (props) => {
 	const initialState = {
 		users: [],
@@ -19,7 +26,7 @@ const GithubState = (props) => {
 	const onSearchUsers = async (searchText) => {
 		setLoading();
 		const response = await axios.get(
-			`https://api.github.com/search/users?q=${searchText}&client_id=7a26272ebf1a0d17cd25&client_secrect=980d0d4ff101da92582af1aa1e9814e774b10fa3`
+			`https://api.github.com/search/users?q=${searchText}&client_id=${githubClientId}&client_secrect=${githubClientSecret}`
 		);
 		dispatch({ type: SEARCH_USERS, payload: response.data.items });
 	};
@@ -28,7 +35,7 @@ const GithubState = (props) => {
 	const getUser = async (userName) => {
 		setLoading();
 		const response = await axios.get(
-			`https://api.github.com/users/${userName}?client_id=7a26272ebf1a0d17cd25&client_secrect=980d0d4ff101da92582af1aa1e9814e774b10fa3`
+			`https://api.github.com/users/${userName}?client_id=${githubClientId}&client_secrect=${githubClientSecret}`
 		);
 		dispatch({ type: GET_USER, payload: response.data });
 	};
